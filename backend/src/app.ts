@@ -5,6 +5,7 @@ import * as compress from "fastify-compress";
 import * as cors from "fastify-cors";
 import * as socketio from "socket.io";
 import routes from "./routes";
+import db from "./db";
 
 const server: fastify.FastifyInstance<
   Server,
@@ -30,11 +31,22 @@ const server: fastify.FastifyInstance<
 // });
 
 const io = socketio(server.server, {
-  transports: ["websocket"],
+  // transports: ["websocket"],
 });
 
 export default () => {
-  io.on("connection", function (socket) {
+  db.table("parties")
+    .changes()
+    .filter(db.row("new_val")("score").gt(db.row("old_val")("score")))(
+      "new_val"
+    )
+    .run()
+    .then((cursor: any) => {
+      cursor.each((err: Error, { id, score }) => {
+        io.emit("on vote", { id, score });
+      });
+    });
+  io.on("connection", async (socket) => {
     socket.on("message", (message) => {
       socket.broadcast.emit("message", message);
     });

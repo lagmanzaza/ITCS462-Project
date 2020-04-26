@@ -23,7 +23,7 @@ export default {
         res.status(403).send({ message: "password is incorrect" });
       }
 
-      const token = jwt.sign(
+      const token = await jwt.sign(
         { authToken: userInfo[0].authToken, role: userInfo[0].role },
         "3h"
       );

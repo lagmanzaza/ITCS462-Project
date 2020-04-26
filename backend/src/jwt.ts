@@ -1,12 +1,13 @@
 import * as jwt from "jsonwebtoken";
 
+const secret = "secret";
 export default {
   sign: (payload: Record<string, any>, expireDate?: string): Promise<string> =>
     new Promise((resolve, reject) => {
       const expiresIn = expireDate || "7d";
       jwt.sign(
         { payload },
-        process.env.JWT_SECRET,
+        secret,
         {
           expiresIn,
         },
@@ -20,7 +21,7 @@ export default {
     try {
       if (authorization) {
         const token = authorization.replace("Bearer ", "");
-        jwt.verify(token, process.env.JWT_SECRET);
+        jwt.verify(token, secret);
         const userInfo: any = jwt.decode(token);
         return { isValid: true, ...userInfo };
       }
