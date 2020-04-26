@@ -9,11 +9,7 @@ export default {
       password: {
         type: "string",
       },
-      role: {
-        type: "string",
-        enum: ["user", "admin"],
-        default: "user",
-      },
     },
+    required: ["username", "password"],
   },
 };

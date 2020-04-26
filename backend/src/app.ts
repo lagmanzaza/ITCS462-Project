@@ -4,7 +4,7 @@ import * as helmet from "fastify-helmet";
 import * as compress from "fastify-compress";
 import * as cors from "fastify-cors";
 import * as socketio from "socket.io";
-import db from "./db";
+import routes from "./routes";
 
 const server: fastify.FastifyInstance<
   Server,
@@ -30,20 +30,21 @@ const server: fastify.FastifyInstance<
 // });
 
 const io = socketio(server.server, {
-  transports: ["websocket"]
+  transports: ["websocket"],
 });
 
 export default () => {
-  io.on("connection", function(socket) {
-    socket.on("message", message => {
+  io.on("connection", function (socket) {
+    socket.on("message", (message) => {
       socket.broadcast.emit("message", message);
     });
-    socket.on("disconnect", function() {});
+    socket.on("disconnect", function () {});
   });
 
   server.register(helmet, { hidePoweredBy: { setTo: "PHP 4.2.0" } });
   server.register(compress, { global: false });
   server.register(cors);
+  server.register(routes, { prefix: "/v1" });
 
   return server;
 };
