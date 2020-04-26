@@ -16,11 +16,13 @@ export default {
       const isFoundedUser = userInfo.length !== 0;
       if (!isFoundedUser) {
         res.status(404).send({ message: "username not found" });
+        return;
       }
 
       const isPasswordCorrect = argon.verify(userInfo[0].password, password);
       if (!isPasswordCorrect) {
         res.status(403).send({ message: "password is incorrect" });
+        return;
       }
 
       const token = await jwt.sign(
