@@ -9,7 +9,7 @@ export default {
   preHandler: verifyRoles(["admin", "user"]),
   handler: async (req: any, res: any) => {
     try {
-      const authToken = req.userInfo.authToken;
+      const authToken = req.userInfo.payload.authToken;
       const result = await db.table("votes").filter({ authToken }).run();
       const isUserVoted = result.length !== 0;
       if (isUserVoted) {

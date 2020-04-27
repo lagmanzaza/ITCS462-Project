@@ -10,7 +10,7 @@ export default {
   handler: async (req: any, res: any) => {
     try {
       const { partyId } = req.body;
-      const authToken = req.userInfo.authToken;
+      const authToken = req.userInfo.payload.authToken;
       const checkUser = await db.table("votes").filter({ authToken }).run();
 
       const isUserVoted = checkUser.length !== 0;
@@ -25,7 +25,6 @@ export default {
         res.status(404).send({ message: "party not found" });
         return;
       }
-
       await db.table("votes").insert({
         authToken,
         partyId,
